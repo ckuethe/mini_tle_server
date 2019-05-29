@@ -1,0 +1,5 @@
+*.pyc
+.*.sw[pomq]
+*.ZIP
+*.zip
+*.sqlite
