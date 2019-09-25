@@ -276,12 +276,17 @@ def search(column=None, op=None, v1=None, v2=None):
         return jsonify({'result': [dict(x) for x in c.fetchall()]})
         
 if __name__ == '__main__':
-    ap = argparse.ArgumentParser()
-    ap.add_argument('-d', '--debug', default=False, action='store_true')
-    ap.add_argument('-w', '--writable', dest='update', default=False, action='store_true')
-    ap.add_argument('-f', '--database', default='tles.sqlite')
-    ap.add_argument('-l', '--listen', default='127.0.0.1')
-    ap.add_argument('-p', '--port', default=4853) # spells 4TLE on a phone keypad
+    ap = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    ap.add_argument('-d', '--debug', dest='debug', default=False,
+                    action='store_true', help='run server in debug mode')
+    ap.add_argument('-w', '--writable', dest='update', default=False,
+                    action='store_true', help='allow write api operations')
+    ap.add_argument('-f', '--database', dest='database', default='tles.sqlite',
+                    metavar='FILE', help='database file')
+    ap.add_argument('-l', '--listen', dest='listen',
+                    default='127.0.0.1', metavar='ADDR', help='bind address')
+    ap.add_argument('-p', '--port', dest='port', default=4853,
+                    help='listen port') # spells 4TLE on a phone keypad
     args = ap.parse_args()
 
     if args.update:
