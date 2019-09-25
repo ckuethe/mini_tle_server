@@ -115,7 +115,7 @@ def dbinit(args):
         "line2"           TEXT NOT NULL CHECK(length(line2)=={2}),
         PRIMARY KEY("norad_catalog")
     ) WITHOUT ROWID;
-    
+
       CREATE INDEX ix_name ON tles (name);
       CREATE INDEX ix_intldes ON tles (intldes);
       CREATE INDEX ix_classified ON tles (classified);
@@ -128,12 +128,12 @@ def dbinit(args):
       CREATE INDEX ix_semimajor_axis ON tles (semimajor_axis);
       CREATE INDEX ix_epoch ON tles (epoch);
     '''.format(minimum_period, minimum_orbit, tle_line_length)
-    
+
     dbh = sqlite3.connect(args.database)
     dbh.row_factory = sqlite3.Row
     if args.initdb:
         dbh.execute('drop table if exists tles')
-    
+
     try:
         dbh.executescript(create_table_sql)
     except sqlite3.OperationalError:
@@ -151,7 +151,7 @@ def orbital_properties(n, e):
     API classes so that users can filter their queries by these values, download only
     the data they need, and decrease the amount of the site's bandwidth that they use.
     Now, all the orbital elements in the satellite catalog (SATCAT) are available in the
-    TLE class. However, the value of the same element (e.g. apogee) may not match exactly. 
+    TLE class. However, the value of the same element (e.g. apogee) may not match exactly.
 
     Every TLE already displays a value for the object's mean motion ("n") and eccentricity
     ("e"), so we derive these additional four values using the following calculations:
@@ -163,7 +163,7 @@ def orbital_properties(n, e):
     apogee = (a * (1 + e))- 6378.135
     perigee = (a * (1 - e))- 6378.135
     '''
-    
+
     earth_radius = 6378.135
     mu = 398600.4418
     seconds_per_day = 86400.0
@@ -173,7 +173,7 @@ def orbital_properties(n, e):
     apogee = (semimajor_axis * (1 + e)) - earth_radius
     perigee = (semimajor_axis * (1 - e)) - earth_radius
     period = minutes_per_day / n
-    
+
     return (semimajor_axis, apogee, perigee, period)
 
 def build_record(tle, classified):
@@ -226,7 +226,7 @@ def do_download(args):
         'User-Agent': 'Wget/1.71.1 (linux-gnu)',
         'Accept-Encoding': 'identity',
     }
-    
+
     fetch(args, 'https://www.prismnet.com/~mmccants/tles/classfd.zip')
     fetch(args, 'https://www.tle.info/data/ALL_TLE.ZIP', fake_hdr)
 
@@ -236,13 +236,13 @@ def load_compressed_tle(args, archive, member, dbh, classified=0):
     tles = {}
     for sat in re.findall('(?P<name>^.+?\n)?(?P<line1>^1 .+?)\n(?P<line2>^2 .+?)\n', buf, re.MULTILINE):
         tles[sat[0].strip()] = (sat[0].strip(), sat[1], sat[2])
-    
+
     if args.do_print:
         print("file {} contains {} TLEs".format(member, len(tles)))
 
     for sat in tles:
         dbinsert(dbh, tles[sat], classified, update=args.update, do_print=args.do_print)
-    
+
     dbh.commit()
 
 def main():

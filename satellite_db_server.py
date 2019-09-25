@@ -39,7 +39,7 @@ search_ops = {
 
 for op in search_ops.keys():
     search_ops['n{}'.format(op)] = search_ops[op]
-    
+
 @app.errorhandler(403)
 def http_forbidden(error):
     return make_response(jsonify({'error': 'Permission Denied'}), 403)
@@ -124,10 +124,10 @@ def list_routes():
 def add_tle():
     ''''POST /add' requires 'application/json' containing a 3 element list containing: ['object name', 'tle line 1', 'tle line 2']\nIt will fail with error code 403 if the server is not writable. It will fail with error code 409 if a TLE for the norad or international catalog id already exists. if the '/classified' suffix is given, the classified attribute will be set in the database
     '''
-    
+
     if args.update is False:
         abort(403)
-    
+
     if request.headers.get('Content-Type', '') != 'application/json':
         abort(406)
 
@@ -142,7 +142,7 @@ def add_tle():
             '2 25544  51.6390 198.1271 0001239 315.7000  44.4052 15.52641749  9097',
             ]
         return make_response(jsonify({'error': 'Method Not Allowed', 'help': 'POST a TLE as a 3-element JSON list', 'tle_example': iss}), 405)
-     
+
     tle = [str(x) for x in request.json]
     classified = request.path.endswith('classified')
     with sqlite3.connect(args.database) as dbh:
@@ -162,13 +162,13 @@ def add_tle():
 def delete_tle(idnum):
     ''''DELETE /delete/<catalog>/<id>' deletes the specified\nIt will fail with error code 403 if the server is not writable. It will fail with error code 410 if a TLE for the norad or international catalog id does not exist.
     '''
-    
+
     if args.update is False:
         abort(403)
-    
+
     if request.headers.get('Content-Type', '') != 'application/json':
         abort(406)
-     
+
     catalog = 'intldes' if 'intldes' in request.path else 'norad_catalog'
     with sqlite3.connect(args.database) as dbh:
         dbh.row_factory = sqlite3.Row
@@ -233,7 +233,7 @@ def schema():
 @app.route('/search/<column>/<op>/<v1>/<v2>', methods=['GET'])
 def search(column=None, op=None, v1=None, v2=None):
     ''''GET /search/<column>/<op>/...' returns results from comparing <column> using the <op> with <v1> and <v2> if necessary. Operators are {}; the 'n' are negated/inverted'''
-    
+
     op = op.lower()
     column = column.lower()
 
@@ -274,7 +274,7 @@ def search(column=None, op=None, v1=None, v2=None):
             c = dbh.execute(q, [v1]) # i hate you sqlite. a string of length N is treated like an N element vector?! WTF!
 
         return jsonify({'result': [dict(x) for x in c.fetchall()]})
-        
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     ap.add_argument('-d', '--debug', dest='debug', default=False,
