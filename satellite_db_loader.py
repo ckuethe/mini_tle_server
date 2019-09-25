@@ -15,17 +15,18 @@ from zipfile import ZipFile
 
 
 # From https://physics.stackexchange.com/questions/113300/why-does-earth-have-a-minimum-orbital-period
-# Assuming for a sec that there was no atmosphere, and the earth is a perfectly smooth sphere with a
-# radius of 6378km and we're orbiting just above the surface, we can calculate that the minimum orbital
-# period is about 84.47 minutes
+# Assuming for a sec that there was no atmosphere, and the earth is a perfectly
+# smooth sphere with a radius of 6378km and we're orbiting just above the surface,
+# we can calculate that the minimum orbital period is about 84.47 minutes
 minimum_period = 84.47
 
-# we seem to think of 60 miles / 100km as "space" ... that's the altitude where you get your astronaut
-# wings. The thermosphere is from 80-500km altitude, and below about 160km a satellite in a *circular*
-# orbit can interact with enough of this thin atmosphere to rapidly decay. Highly elliptical orbits are
-# quite different.
+# we seem to think of 60 miles / 100km as "space" ... that's the altitude where you
+# get your astronaut wings. The thermosphere is from 80-500km altitude, and below
+# about 160km a satellite in a *circular* orbit can interact with enough of this
+# thin atmosphere to rapidly decay. Highly elliptical orbits are quite different.
 #
-# Some photoreconnaissance satellites had a perigee as low as 152km, Molniya orbits can come closer ~120km
+# Some photoreconnaissance satellites had a perigee as low as 152km, Molniya
+# orbits can come closer - about 120km
 minimum_orbit = 100
 
 # Perhaps I should use the python-sgp4 checksum fixer...
@@ -148,13 +149,15 @@ def orbital_properties(n, e):
     Slightly modified from space-track.org FAQ:
 
     We added semi-major axis, period, apogee, and perigee to the TLE and TLE_latest
-    API classes so that users can filter their queries by these values, download only
-    the data they need, and decrease the amount of the site's bandwidth that they use.
-    Now, all the orbital elements in the satellite catalog (SATCAT) are available in the
-    TLE class. However, the value of the same element (e.g. apogee) may not match exactly.
+    API classes so that users can filter their queries by these values, download
+    only the data they need, and decrease the amount of the site's bandwidth that
+    they use. Now, all the orbital elements in the satellite catalog (SATCAT) are
+    available in the TLE class. However, the value of the same element (e.g.
+    apogee) may not match exactly.
 
-    Every TLE already displays a value for the object's mean motion ("n") and eccentricity
-    ("e"), so we derive these additional four values using the following calculations:
+    Every TLE already displays a value for the object's mean motion ("n") and
+    eccentricity ("e"), so we derive these additional four values using the
+    following calculations:
 
     period = 1440/n
     Using mu, the standard gravitational parameter for the earth (398600.4418),
