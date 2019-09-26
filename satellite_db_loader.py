@@ -6,7 +6,7 @@ from __future__ import print_function
 import os
 import re
 import sqlite3
-from argparse import ArgumentParser
+import argparse
 from ephem import readtle
 from math import pi, degrees
 from requests import get as wget
@@ -249,11 +249,11 @@ def load_compressed_tle(args, archive, member, dbh, classified=0):
     dbh.commit()
 
 def main():
-    ap = ArgumentParser()
-    ap.add_argument('-d', '--database', dest='database', default='tles.sqlite')
-    ap.add_argument('-i', '--initdb', dest='initdb', default=False, action='store_true')
-    ap.add_argument('-r', '--refetch', dest='refetch', default=False, action='store_true')
-    ap.add_argument('-u', '--update', dest='update', default=False, action='store_true')
+    ap = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    ap.add_argument('-d', '--database', dest='database', default='tles.sqlite', help="database file")
+    ap.add_argument('-i', '--initdb', dest='initdb', default=False, action='store_true', help="initialize the database")
+    ap.add_argument('-r', '--refetch', dest='refetch', default=False, action='store_true', help="download new datafiles")
+    ap.add_argument('-u', '--update', dest='update', default=False, action='store_true', help="update database records")
     ap.add_argument('-q', '--quiet', dest='do_print', default=True, action='store_false')
     args = ap.parse_args()
 
