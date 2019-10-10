@@ -1,0 +1,13 @@
+[Unit]
+Description=TLE Serving API
+After=multi-user.target
+
+[Service]
+Type=idle
+User=ckuethe
+ExecStart=/path/to/satellite_db_server.py -f /path/to/tles.sqlite
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
