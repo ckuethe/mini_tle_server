@@ -49,6 +49,8 @@ def fetch(args, url, headers=None):
     '''download a file'''
     fname = os.path.basename(url)
     if not os.path.exists(fname) or args.refetch is True:
+        if args.do_print:
+            print('download {}'.format(url))
         if headers is None:
             headers = {}
         with wget(url, timeout=5, stream=True, headers=headers) as resp:
@@ -102,6 +104,7 @@ def dbinit(args):
       CREATE TABLE "tles" (
         "norad_catalog"   INTEGER NOT NULL CHECK(norad_catalog>0) UNIQUE,
         "classified"      INTEGER NOT NULL DEFAULT 0 CHECK(classified==0 or classified==1),
+        "payload"         INTEGER NOT NULL DEFAULT 0 CHECK(payload==0 or payload==1),
         "inclination"     REAL NOT NULL CHECK(inclination>=-180 and inclination <=180),
         "period"          REAL NOT NULL CHECK(period>={0}),
         "apogee"          REAL NOT NULL CHECK(apogee>={1} or perigee>={1}),
@@ -120,6 +123,7 @@ def dbinit(args):
       CREATE INDEX ix_name ON tles (name);
       CREATE INDEX ix_intldes ON tles (intldes);
       CREATE INDEX ix_classified ON tles (classified);
+      CREATE INDEX ix_payload ON tles (payload);
       CREATE INDEX ix_eccentricity ON tles (eccentricity);
       CREATE INDEX ix_perigee ON tles (perigee);
       CREATE INDEX ix_apogee ON tles (apogee);
@@ -184,11 +188,15 @@ def build_record(tle, classified):
     es = readtle(*tle)
     semimajor_axis, apogee, perigee, period = orbital_properties(es._n, es._e)
     intldes = tle[1][9:17].strip()
+    payload = True
+    if re.search(r'\b(DEB(RIS)?|R/B(\(\d+\))?|r)\b', es.name):
+        payload = False
     return {
         'norad_catalog': es.catalog_number,
         'intldes': intldes,
         'name': es.name,
         'classified': classified,
+        'payload': payload,
         'inclination': degrees(es._inc),
         'mean_motion': es._n,
         'period': period,

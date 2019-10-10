@@ -17,6 +17,7 @@ search_params = [
     'norad_catalog',
     'intldes',
     'classified',
+    'payload',
     'inclination',
     'mean_motion',
     'period',
